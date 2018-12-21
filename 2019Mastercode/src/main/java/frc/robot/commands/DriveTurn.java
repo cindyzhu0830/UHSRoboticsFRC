@@ -14,11 +14,11 @@ import frc.robot.RobotMap;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class DriveTurn extends Command {
-    private double angle;
+    private int angle;
     private double power;
-    private double countAngle = 0;
+    private int countAngle = 0;
 
-    public DriveTurn(double power, double angle) {//input true to turn left and false to turn right
+    public DriveTurn(double power, int angle) {//input true to turn left and false to turn right
         // requires(Robot.driveStraightPID);
         // requires(Robot.driveDistancePID);
         requires(Robot.driveSubsystem);
@@ -30,7 +30,7 @@ public class DriveTurn extends Command {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
-        countAngle = angle - RobotMap.gyro.getAngle();
+        countAngle = (int) (angle - RobotMap.gyro.getAngle());
         if(countAngle >= 0){
             Robot.driveSubsystem.drive(this.power, 0);
         }
