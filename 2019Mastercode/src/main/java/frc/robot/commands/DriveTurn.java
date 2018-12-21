@@ -7,20 +7,22 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
+import frc.robot.RobotMap;
+import frc.robot.subsystems.DriveSubsystem;
 
-public class DriveByTime extends Command {
-    private int time;
-    private int count = 0;
-    //private int timeout;
+public class DriveTurn extends Command {
+    private double angle;
     private double power;
+    private double countAngle = 0;
 
-    public DriveByTime(double power, int time) {
+    public DriveTurn(double power, double angle) {//input true to turn left and false to turn right
         // requires(Robot.driveStraightPID);
         // requires(Robot.driveDistancePID);
         requires(Robot.driveSubsystem);
-        this.time = time;
+        this.angle = angle;
         this.power = power;
         // Robot.driveStraightPID.disable();
     }
@@ -28,29 +30,29 @@ public class DriveByTime extends Command {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
-        // count = 0;
-        // RobotMap.gyro.reset();
-        // RobotMap.leftEncoder.reset();
-        // RobotMap.rightEncoder.reset();
-        Robot.driveSubsystem.drive(power, power);
+        countAngle = angle - RobotMap.gyro.getAngle();
+        if(countAngle >= 0){
+            Robot.driveSubsystem.drive(this.power, 0);
+        }
+        else{
+            Robot.driveSubsystem.drive(0, this.power);
+        }
+
     }
 
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-        count++;
-        // if(count == 5){ //100 ms to reset, need test
-        // Robot.driveStraightPID.setSetpoint(0); //drive straight
-        // Robot.driveStraightPID.enable();
-        // }
+      
     }
 
     // Make this return true when this Command no longer needs to run execute()
     @Override
     protected boolean isFinished() {
-        if (count >= time) {
+        if((RobotMap.gyro.getAngle() >= this.angle && countAngle > 0)||(RobotMap.gyro.getAngle() <= this.angle && countAngle < 0) ){
             return true;
-        } else {
+        }
+        else{
             return false;
         }
     }
